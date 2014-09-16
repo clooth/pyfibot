@@ -24,8 +24,8 @@ def command_admin_add(bot, user, channel, args):
   if get_op_status(user):
     if not get_op_status(args):
       conn, c = open_DB()
-      insert = "INSERT INTO ops VALUES ('" + args + "');"
-      c.execute(insert)
+      insert = "INSERT INTO ops VALUES (?);"
+      c.execute(insert, args)
       conn.commit()
       conn.close()
       bot.say(channel, "Admin lisätty.")
@@ -55,10 +55,10 @@ def command_admin_remove(bot, user, channel, args):
   if get_op_status(user):
     if get_op_status(args):
       conn, c = open_DB()
-      c.execute("SELECT hostmask FROM ops WHERE hostmask = '" + args + "'")
+      c.execute("SELECT hostmask FROM ops WHERE hostmask = ?", args)
       if c.fetchone():
         conn, c = open_DB()
-        c.execute("DELETE FROM ops WHERE hostmask = '" + args + "'")
+        c.execute("DELETE FROM ops WHERE hostmask = ?", args)
         conn.commit()
         conn.close()
         bot.say(channel, "Success: admin removed.")
@@ -71,7 +71,7 @@ def get_op_status(user):
      return True
   else:
     conn, c = open_DB()
-    c.execute("SELECT hostmask FROM ops WHERE hostmask = '" + user + "' ")
+    c.execute("SELECT hostmask FROM ops WHERE hostmask = ?", user)
     if c.fetchone():
       retval = True
     else:
